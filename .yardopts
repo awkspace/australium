@@ -1,0 +1,2 @@
+--title "Australium"
+--exclude data --exclude test --exclude tmp
