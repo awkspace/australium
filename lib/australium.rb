@@ -3,12 +3,12 @@ path = File.dirname(__FILE__)
 require 'ostruct'
 require 'date'
 
-Dir["#{path}/Australium/ref/*.rb"].each { |f| require f }
+Dir["#{path}/australium/ref/*.rb"].each { |f| require f }
 
-require "#{path}/Australium/event.rb"
-Dir["#{path}/Australium/events/*.rb"].each { |f| require f }
+require "#{path}/australium/event.rb"
+Dir["#{path}/australium/events/*.rb"].each { |f| require f }
 
-Dir["#{path}/Australium/*.rb"].each { |f| require f }
+Dir["#{path}/australium/*.rb"].each { |f| require f }
 
 module Australium
 
