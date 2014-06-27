@@ -8,6 +8,7 @@ Dir["#{path}/australium/ref/*.rb"].each { |f| require f }
 require "#{path}/australium/event.rb"
 Dir["#{path}/australium/events/*.rb"].each { |f| require f }
 
+require "#{path}/australium/event_filters.rb"
 Dir["#{path}/australium/*.rb"].each { |f| require f }
 
 module Australium

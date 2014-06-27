@@ -5,16 +5,11 @@ module Australium
 
     class << self
       private
-      # Creates shortcuts for returning events of a certain type.
-      # @param [Symbol] event_name the friendly name of the event category
-      # @param [Class] event_class the class name corresponding to the event
-      # @!macro [attach] event_selector
-      #   @!method $1
-      #   @return [Array<$2>] Returns all {$2 $2} events.
-      def event_selector(event_name, event_class)
+      def event_filter(event_name, event_class)
         define_method(event_name) { @events.select { |e| e.is_a?(event_class) } }
       end
     end
+    include EventFilters
 
     # @!attribute [r] events
     #   @return [Array<Events>] events that took place during the game, in chronological order
@@ -40,18 +35,6 @@ module Australium
     def map_name
       @events.select { |e| e.is_a?(MapStart) }.last.map_name
     end
-
-    # @!group Event filters
-    event_selector :connects,      PlayerConnect
-    event_selector :disconnects,   PlayerDisconnect
-    event_selector :role_changes,  PlayerRoleChange
-    event_selector :team_joins,    PlayerJoinTeam
-    event_selector :kills,         PlayerKill
-    event_selector :name_changes,  PlayerNameChange
-    event_selector :chat_messages, PlayerSay
-    event_selector :suicides,      PlayerSuicide
-    event_selector :triggers,      Trigger
-    # @!endgroup
 
     # Hide instance variables from #inspect to prevent clutter on interactive terminals.
     # @return [String]
