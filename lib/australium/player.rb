@@ -31,23 +31,18 @@ module Australium
 
     end
 
+    # @!method ==(player)
+    # @!method eql?(player)
     # Compares players by steam IDs and bots by nicks.
     # @param player [Player] the player to compare against
     # @return [Boolean]
-    def ==(player)
-      if [self, player].all?(&:bot?)
-        self.nick == player.nick
-      else
-        self.steam_id == player.steam_id
-      end
-    end
-
-    # (see #==)
-    def eql?(player)
-      if [self, player].all?(&:bot?)
-        self.nick.eql?(player.nick)
-      else
-        self.steam_id.eql?(player.steam_id)
+    [:==, :eql?].each do |method|
+      define_method(method) do |player|
+        if [self, player].all?(&:bot?)
+          self.nick.send(method, player.nick)
+        else
+          self.steam_id.send(method, player.steam_id)
+        end
       end
     end
 
