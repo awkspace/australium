@@ -1,0 +1,1 @@
+class CacheReadError < StandardError ; end
