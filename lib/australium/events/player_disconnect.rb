@@ -1,7 +1,7 @@
 module Australium
   class PlayerDisconnect < Event
 
-    LOG_REGEX = /"(?<player>.+)" disconnected"/
+    LOG_REGEX = /"(?<player>.+)" disconnected/
 
     # @!attribute player
     #   @return [Player] the {Player} who disconnected from the server.
