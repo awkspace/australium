@@ -9,7 +9,7 @@ module Australium
 
     def initialize(data)
       super(data)
-      state.players.find { |p| p == player }[:in_game?] = true
+      player[:in_game?] = true
     end
 
   end

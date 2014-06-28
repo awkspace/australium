@@ -10,10 +10,7 @@ module Australium
 
     def initialize(data)
       super(data)
-      unless state.nil?
-        player = state.players.find { |p| p.nick == self.player.nick }
-        player.team = team
-      end
+      player.team = team
     end
 
   end
