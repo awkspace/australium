@@ -73,7 +73,7 @@ module Australium
         unless db_state.keys.include?(table)
           @db.create_table(table) do
             primary_key :id
-            Fixnum :game_id, :index => true
+            Bignum :game_id, :index => true
             Fixnum :line_number, :index => true
             DateTime :timestamp, :index => true
           end
