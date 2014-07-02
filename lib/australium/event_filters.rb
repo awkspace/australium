@@ -25,6 +25,7 @@ module Australium
     event_filter :map_starts,    MapStart
     event_filter :connects,      PlayerConnect
     event_filter :disconnects,   PlayerDisconnect
+    event_filter :entrances,     PlayerEnterGame
     event_filter :role_changes,  PlayerRoleChange
     event_filter :team_joins,    PlayerJoinTeam
     event_filter :kills,         PlayerKill
