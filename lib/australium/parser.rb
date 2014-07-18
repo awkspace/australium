@@ -4,31 +4,46 @@ module Australium
     using MatchDataToHash
     using OpenStructDeepClone
 
-    # Parses a full TF2 log.
+    # Splits a TF2 logfile into an array of individual lines.
+    # @param [String] filename the location of the log file to parse
+    # @return [Array<String>] an array of log entries
+    def self.parse_file(logfile)
+      File.read(logfile).encode('UTF-8', :invalid => :replace, :replace => '').split("\n")
+    end
+
+    # Splits a TF2 file log into individual game logs, dumping anything extraneous.
+    # @param [Array<String>] file_log the file log to parse
+    # @return [Array<Array<String>>] an array of one or more game logs
+    def self.parse_file_log(file_log)
+      file_log.slice_before(MapLoad::LOG_REGEX).select { |l| l.first =~ MapLoad::LOG_REGEX }
+    end
+
+    # Calculates a SHA1 digest of a game_log. Used for identifying unique {Game}s.
+    # @param [Array<String>] game_log the game log to hash
+    # @return [String] SHA1 hash of the game_log
+    def self.game_log_digest(game_log)
+      Digest::SHA1.hexdigest(game_log.join("\n"))
+    end
+
+    # Parses a log of a full TF2 game.
     # @param [Array<String>] lines the lines to parse
-    # @return [Array<Game>] the game(s) data
-    def self.parse(lines)
-      games = []
+    # @param [Hash] properties an optional hash of properties to pass into the event objects
+    # @return [Array<Game>] the game data
+    def self.parse_game_log(lines, properties = {})
+      state = GameState.new
+      state.game_id = game_log_digest(lines)
+      events = []
 
-      game_lines = lines.slice_before(MapLoad::LOG_REGEX).select { |l| l.first =~ MapLoad::LOG_REGEX }
-
-      game_lines.each do |lines|
-        state = GameState.new
-        state.game_id = lines.hash
-        events = []
-
-        lines.each_with_index do |line, index|
-          event = parse_line(line, index, state)
-          unless event.nil?
-            events << event
-            state = event.state.deep_clone
-          end
+      lines.each_with_index do |line, index|
+        event = parse_line(line, index, state)
+        unless event.nil?
+          properties.each_pair { |key, value| event[key] = value }
+          events << event
+          state = event.state.deep_clone
         end
-
-        games << Game.new(events) unless events.empty?
       end
 
-      games
+      events.empty? ? nil : Game.new(events)
     end
 
     # Parses a single line of TF2 log in the context of a game (if a {GameState} is passed).
@@ -51,11 +66,13 @@ module Australium
           data.merge!(property_data)
 
           # Add other useful data
-          data[:line_number] = line_number
-          data[:state] = state
-          data[:raw] = line
-          data[:timestamp] = timestamp
-          data[:game_id] = state.game_id unless state.nil?
+          data.merge!({
+            :line_number => line_number,
+            :state => state,
+            :raw => line,
+            :timestamp => timestamp,
+            :game_id => (state.nil? ? nil : state.game_id)
+          })
 
           # Construct and return the new Event
           return event_class.new(data)

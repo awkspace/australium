@@ -21,6 +21,13 @@ module Australium
       @db = db
     end
 
+    # Returns true if this game's data has been cached.
+    # @param [Fixnum] game_hash hash of a game_log
+    # @return [TrueClass] whether or not the data from this game_log has been cached
+    def has_game?(game_hash)
+      @db[:MapLoad].where(:game_id => game_hash).count > 0 rescue false
+    end
+
     # Passes a block to the database object and returns reconstructed Events.
     # @param [Proc] block the queries to act on the database object
     # @return [Array<Event>] the reconstructed Event object or objects, if reconstruction was successful
@@ -55,11 +62,28 @@ module Australium
       events.map { |event| event_class.new(event) }
     end
 
-    # Caches one or more Events.
-    # @param [Array<Event>] events events to be added to the cache
-    def store(events)
+    # Caches a complete {Game}.
+    # @param [Australium::Game] game game to be added to the cache
+    def store(game)
 
       data = Hash.new { |h, k| h[k] = [] }
+
+      # If a MapLoad event exists with identical parameters for everything except the game hash, delete the previous
+      # game data - as this indicates an invalid or incomplete log was stored.
+      if @db.tables.include?(:MapLoad)
+        event = game.map_loads.first
+        matches = db[:MapLoad].where(
+          :server => event.server,
+          :timestamp => event.timestamp
+        )
+        matches.each do |match|
+          puts "Removing data from game #{match[:game_id]} as an incomplete cache."
+          invalid_game = match[:game_id]
+          @db.tables.each do |table|
+            @db[table].where(:game_id => invalid_game).delete
+          end
+        end
+      end
 
       # Keep the database state in memory to avoid querying for the state while inside loops.
       db_state = {}
@@ -67,13 +91,14 @@ module Australium
         db_state[table] = @db[table].columns
       end
 
-      events.each do |event|
+      game.events.each do |event|
         table = event.class.to_s.split('::').last.to_sym
 
         unless db_state.keys.include?(table)
           @db.create_table(table) do
             primary_key :id
-            Bignum :game_id, :index => true
+            String :game_id, :index => true
+            String :server, :index => true
             Fixnum :line_number, :index => true
             DateTime :timestamp, :index => true
           end

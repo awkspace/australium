@@ -17,8 +17,11 @@ module Australium
   # @param [String] logfile the location of the logfile.
   # @return [Array<Game>] the parsed game data.
   def self.parse_file(logfile)
-    log = File.read(logfile).encode('UTF-8', :invalid => :replace, :replace => '')
-    Parser::parse(log.split("\n"))
+    file_log = Parser::parse_file(logfile)
+    game_logs = Parser::parse_file_log(file_log)
+    game_logs.map do |game_log|
+      Praser::parse_game(game_log)
+    end
   end
 
   # Future expansion: #parse should be able to determine the kind of input given and parse accordingly - i.e.
