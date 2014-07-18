@@ -40,8 +40,8 @@ module Australium
       # Cycle through each result and transform it from a Sequel::Dataset into an Event.
       begin
         event_class = Australium.const_get(events.first_source_table)
-      rescue NameError
-        raise CacheReadError
+      rescue NameError => e
+        raise CacheReadError.new(e)
       end
 
       events = events.to_a
