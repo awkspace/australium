@@ -8,7 +8,8 @@ module Australium
 
     def initialize(data)
       super(data)
-      state.players.delete(player) unless state.nil?
+      player[:connected?, timestamp] = false
+      player[:in_game?, timestamp] = false
     end
 
   end

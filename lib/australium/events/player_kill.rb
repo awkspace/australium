@@ -10,5 +10,13 @@ module Australium
     # @!attribute weapon
     #   @return [String] the name of the weapon used to kill (can be World).
 
+    def initialize(data)
+      super(data)
+      [attacker, victim].each do |player|
+        player[:connected?, timestamp] = true
+        player[:in_game?, timestamp] = true
+      end
+    end
+
   end
 end
