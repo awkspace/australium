@@ -2,6 +2,7 @@ path = File.dirname(__FILE__)
 
 require 'ostruct'
 require 'date'
+require 'time'
 
 Dir["#{path}/australium/ref/*.rb"].each { |f| require f }
 
