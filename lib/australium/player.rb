@@ -17,6 +17,14 @@ module Australium
     def initialize(*args)
       super(*args)
 
+      # Change steamIDs from the old format to the new one
+      match = self[:steam_id].match(/STEAM_0:([0-9]+):([0-9]+)/)
+      unless match.nil?
+        begin
+          self[:steam_id] = "[U:1:#{match[2].to_i * 2 + match[1].to_i}]"
+        rescue nil ; end
+      end
+
       # @!attribute address
       #   @return [String, NilClass] the player's IP address, or nil if not known
       self[:address] = nil
