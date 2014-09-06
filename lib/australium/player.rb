@@ -1,7 +1,7 @@
 module Australium
 
   # Represents a Player playing a Game.
-  class Player < OpenStruct
+  class Player < TimedOpenStruct
 
     LOG_REGEX = /(?<nick>.*)<(?<won_id>.*)><(?<steam_id>.*)><(?<team>.*)>/
 
@@ -24,6 +24,10 @@ module Australium
       # @!attribute in_game?
       #   @return [Boolean] true if the player is in the game (as determined by a triggered {PlayerEnterGame} event).
       self[:in_game?] = false
+
+      # @!attribute connected?
+      #   @return [Boolean] true if the player is currently connected to the server
+      self[:connected?] = false
 
       # @!attribute role
       #   @return [String, NilClass] the name of the role the player is playing, or nil if none yet
