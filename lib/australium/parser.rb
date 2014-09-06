@@ -1,8 +1,9 @@
+require 'digest/sha1'
+
 module Australium
 
   class Parser
     using MatchDataToHash
-    using OpenStructDeepClone
 
     # Splits a TF2 logfile into an array of individual lines.
     # @param [String] filename the location of the log file to parse
@@ -39,7 +40,7 @@ module Australium
         unless event.nil?
           properties.each_pair { |key, value| event[key] = value }
           events << event
-          state = event.state.deep_clone
+          state = event.state.clone
         end
       end
 

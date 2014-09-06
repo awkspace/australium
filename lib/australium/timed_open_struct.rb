@@ -38,5 +38,13 @@ class TimedOpenStruct < OpenStruct
     duration_table
   end
 
+  def initialize_clone(other)
+    super(other)
+    cloned_history = @table_history.clone
+    cloned_history.each_pair do |key, value|
+      cloned_history[key] = value.clone
+    end
+    self.instance_variable_set(:@table_history, cloned_history)
+  end
 
 end
