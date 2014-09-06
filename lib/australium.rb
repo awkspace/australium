@@ -21,7 +21,7 @@ module Australium
     file_log = Parser::parse_file(logfile)
     game_logs = Parser::parse_file_log(file_log)
     game_logs.map do |game_log|
-      Praser::parse_game(game_log)
+      Parser::parse_game_log(game_log)
     end
   end
 
