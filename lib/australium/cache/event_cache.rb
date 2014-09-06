@@ -25,7 +25,11 @@ module Australium
     # @param [Fixnum] game_hash hash of a game_log
     # @return [TrueClass] whether or not the data from this game_log has been cached
     def has_game?(game_hash)
-      @db["MapLoad"].find(:game_id => game_hash).to_a.count > 0 rescue false
+      begin
+        @db["MapLoad"].find(:game_id => game_hash).to_a.count > 0 && @db["GameEnd"].find(:game_id => game_hash).to_a.count > 0
+      rescue
+        false
+      end
     end
 
     # Passes a block to the database object and returns reconstructed Events.
