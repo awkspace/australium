@@ -11,6 +11,7 @@ module Australium
     def initialize(data)
       super(data)
       player.address = address
+      player[:connected?, timestamp] = true
     end
 
   end

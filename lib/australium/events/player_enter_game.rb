@@ -9,7 +9,8 @@ module Australium
 
     def initialize(data)
       super(data)
-      player[:in_game?] = true
+      player[:connected?, timestamp] = true
+      player[:in_game?, timestamp] = true
     end
 
   end

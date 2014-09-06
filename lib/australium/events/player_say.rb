@@ -11,6 +11,9 @@ module Australium
     def initialize(data)
       super(data)
       self[:team] = team.eql?('_team')
+
+      player[:connected?, timestamp] = true
+      player[:in_game?, timestamp] = true
     end
 
     # Checks if the message was a team-only message.

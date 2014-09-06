@@ -13,5 +13,13 @@ module Australium
     # @!attribute target
     #   @return [Player, NilClass] the {Player} who received the action, or nil if no {Player} received the action.
 
+    def initialize(data)
+      super(data)
+      if initiator.is_a?(Player)
+        initiator[:connected?, timestamp] = true
+        initiator[:in_game?, timestamp] = true
+      end
+    end
+
   end
 end
