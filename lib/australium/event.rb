@@ -10,6 +10,8 @@ module Australium
     TIMESTAMP_REGEX = %r(L [0-9]{2}/[0-9]{2}/[0-9]{4} - [0-9]{2}:[0-9]{2}:[0-9]{2})
     PROPERTY_REGEX = /\(([^ ]+) "([^"]+)"\)/
 
+    TIMESTAMP_FORMAT = 'L %m/%d/%Y - %H:%M:%S'
+
     class << self
       attr_accessor :event_classes
       def inherited(by)

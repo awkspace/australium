@@ -44,7 +44,18 @@ module Australium
         end
       end
 
-      events.empty? ? nil : Game.new(events)
+      if events.empty?
+        nil
+      else
+        events << GameEnd.new(
+          :line_number => events.last.line_number + 1,
+          :timestamp => events.last.timestamp,
+          :server => events.last.server,
+          :game_id => events.last.game_id,
+          :state => (events.last.state.clone rescue nil)
+        )
+        Game.new(events)
+      end
     end
 
     # Parses a single line of TF2 log in the context of a game (if a {GameState} is passed).
@@ -54,9 +65,10 @@ module Australium
     # @return [Event, NilClass] event if an event has been recognized; nil otherwise.
     def self.parse_line(line, line_number, state = nil)
       Event::event_classes.each do |event_class|
+        next unless defined?(event_class::LOG_REGEX)
         if event_class::LOG_REGEX =~ line
           # Get timestamp data & timestamp GameState if we are being stateful
-          timestamp = DateTime.strptime(Event::TIMESTAMP_REGEX.match(line)[0], 'L %m/%d/%Y - %H:%M:%S')
+          timestamp = Time.strptime(Event::TIMESTAMP_REGEX.match(line)[0], Event::TIMESTAMP_FORMAT)
           state.timestamp = timestamp unless state.nil?
 
           # Get the meat of the event data
